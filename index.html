@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
   <link rel="dns-prefetch" href="https://script.googleusercontent.com">
 
-  <!-- PWA一式 -->
+  <!-- PWA一式（※ すべてリポジトリ直下） -->
   <link rel="apple-touch-icon" sizes="180x180" href="./icon-180.png?v=5" />
   <link rel="manifest" href="./manifest.webmanifest?v=5" />
   <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=5" />
@@ -20,9 +20,9 @@
 
   <title>リハビリデイあすか見学申込 – 起動</title>
 
-  <!-- JS無効時のフォールバック：定義値へリダイレクト -->
+  <!-- JS無効時フォールバック -->
   <noscript>
-    <meta http-equiv="refresh" content="0; url=https://script.google.com/macros/s/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/exec">
+    <meta http-equiv="refresh" content="0; url=https://script.google.com/macros/s/AKfycbx8d088TNj4ZOe5FKzCo5oIJCcVIbgk1mBQHLcBtLWc1Ol-KafJDDVSuLIYt_JfF9S1/exec">
   </noscript>
 
   <style>
@@ -40,7 +40,7 @@
     <div class="card">
       <h1 style="margin:0 0 8px">起動中…</h1>
       <p class="muted" id="msg">自動でアプリへ移動します。開かない場合は下のボタンを押してください。</p>
-      <p><a id="fallback" href="#" class="btn">今すぐ開く</a></p>
+      <p><a id="fallback" href="#" class="btn" rel="noopener">今すぐ開く</a></p>
       <p class="muted" style="font-size:12px;margin-top:16px">
         ※ ホーム追加やオフライン対応は <a href="./install.html">インストール手順</a> を参照。
       </p>
@@ -48,26 +48,21 @@
   </div>
 
   <script>
-    // ---- ここだけ差し替えればOK（既定のGAS URL） ----
-    const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbx8d088TNj4ZOe5FKzCo5oIJCcVIbgk1mBQHLcBtLWc1Ol-KafJDDVSuLIYt_JfF9S1/exec";
-    // ---------------------------------------------------
+    // ---- ここだけ差し替えればOK（既定の GAS URL） ----
+    const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbx9iaTn_I5Cns2B8K_Lh9G0lkhINsD_AfikPSYynfhl_Dklurrkat1ntHcN0_Xd_Egb/exec";
+    // -----------------------------------------------------
 
-    const curUrl = new URL(location.href);
-    const params = curUrl.searchParams;
+    const params = new URLSearchParams(location.search);
+    const stay        = params.has('stay');
+    const appOverride = params.get('app');
+    const clearApp    = params.has('clear_app');
 
-    // 管理用クエリ
-    const stay       = params.has('stay');
-    const appOverride= params.get('app');      // 一時上書き→保存
-    const clearApp   = params.has('clear_app');
-
-    // 保存されたURLを優先（?app= が来たら保存する）
     if (clearApp) localStorage.removeItem('GAS_URL');
     if (appOverride) localStorage.setItem('GAS_URL', appOverride);
 
-    const saved = localStorage.getItem('GAS_URL');
-    const targetBase = saved || DEFAULT_GAS_URL;
+    const targetBase = localStorage.getItem('GAS_URL') || DEFAULT_GAS_URL;
 
-    // 転送先を作る（stay/app/clear_app は除外）
+    // 現在のクエリ/ハッシュを維持（管理用パラメータは除外）
     const out = new URL(targetBase);
     params.forEach((v, k) => {
       if (k === 'stay' || k === 'app' || k === 'clear_app') return;
@@ -75,17 +70,16 @@
     });
     const outHref = out.toString() + (location.hash || '');
 
-    // UI更新
-    const fallback = document.getElementById('fallback');
-    fallback.href = outHref;
+    // UI
+    document.getElementById('fallback').href = outHref;
 
-    // 自動移動（stay=1 のときは止める）
-    if (!stay) {
-      // 戻るボタンに履歴を残さない
-      location.replace(outHref);
+    // 自動遷移（履歴を汚さない）
+    if (!stay) location.replace(outHref);
+
+    // （任意）ここでも SW を登録しておくと初回からオフライン対応が効きやすい
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js?v=5', { scope: './' }).catch(()=>{});
     }
   </script>
 </body>
 </html>
-
-
