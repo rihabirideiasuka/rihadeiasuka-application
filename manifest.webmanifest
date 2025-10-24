@@ -1,9 +1,9 @@
 {
   "name": "リハビリデイあすか見学申込",
   "short_name": "リハデイあすか申込",
-  "id": "/rihabirideiasuka/",
-  "start_url": "/rihabirideiasuka/?source=pwa_v6",
-  "scope": "/rihabirideiasuka/",
+  "id": "./",
+  "start_url": "./index.html?src=pwa_v6",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#f9f5ee",
   "theme_color": "#ff1493",
