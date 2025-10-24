@@ -1,24 +1,24 @@
-// === バージョンを上げると配信後に確実に切り替わります ⇒バージョンが上がった時にv=3部分をv=4にする===
+// ====== バージョン管理 ======
+// 1) ここ（const SHELL_CACHE = 'rihadeiasuka-shell-v5';）を増分すると古いキャッシュを掃除
+// 2) install.html / index.html の register('./sw.js?v=5') の数字も一緒に増分
 const SHELL_CACHE = 'rihadeiasuka-shell-v5';
 
-// 事前キャッシュする静的アセット
+// 事前キャッシュする静的アセット（すべてリポジトリ直下）
 const PRECACHE = [
   './',
   './index.html',
   './install.html',
-  './manifest.webmanifest.txt',
-  './icons/icon-180.png',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/favicon-32.png',
-  './icons/favicon-16.png'
+  './manifest.webmanifest',
+  './icon-180.png',
+  './icon-192.png',
+  './icon-512.png',
+  './favicon-32.png',
+  './favicon-16.png'
 ];
 
 // ----- lifecycle -----
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(SHELL_CACHE).then((cache) => cache.addAll(PRECACHE))
-  );
+  event.waitUntil(caches.open(SHELL_CACHE).then((cache) => cache.addAll(PRECACHE)));
   self.skipWaiting();
 });
 
@@ -32,12 +32,10 @@ self.addEventListener('activate', (event) => {
 });
 
 // ----- fetch strategy -----
-// ・HTMLナビゲーション: ネット優先 → 失敗時は index.html
-// ・それ以外: キャッシュ優先 → なければネット → 成功時は同一オリジンだけ動的キャッシュ
+// ・HTML: ネット優先 → 失敗時 index.html を返す
+// ・その他: キャッシュ優先 → 失敗時はネット → 成功なら同一オリジンのみ動的キャッシュ
 self.addEventListener('fetch', (event) => {
   const req = event.request;
-
-  // GET以外は対象外
   if (req.method !== 'GET') return;
 
   const isHTML =
@@ -49,9 +47,8 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(req)
         .then((res) => {
-          // 最新index.htmlをキャッシュへ入れ直す（簡易）
-          const copy = res.clone();
-          caches.open(SHELL_CACHE).then((c) => c.put('./index.html', copy));
+          // 最新 index.html をキャッシュ更新
+          caches.open(SHELL_CACHE).then((c) => c.put('./index.html', res.clone()));
           return res;
         })
         .catch(() => caches.match('./index.html'))
@@ -59,18 +56,14 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 画像/JS/CSS 等はキャッシュ優先
   event.respondWith(
     caches.match(req).then((cached) => {
       if (cached) return cached;
-
       return fetch(req)
         .then((netRes) => {
-          // 同一オリジンかつ成功レスポンスのみ動的キャッシュ
           const url = new URL(req.url);
           if (netRes.ok && url.origin === location.origin) {
-            const copy = netRes.clone();
-            caches.open(SHELL_CACHE).then((c) => c.put(req, copy));
+            caches.open(SHELL_CACHE).then((c) => c.put(req, netRes.clone()));
           }
           return netRes;
         })
@@ -78,6 +71,3 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
-
-
-
