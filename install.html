@@ -58,7 +58,7 @@
   </div>
 
   <script>
-    // SW登録
+    // SW登録⇒navigator.serviceWorker.register('./sw.js?v=3', { scope: './' });⇒バージョンが上がった時にv=3部分をv=4にする
     (async () => {
       if (!('serviceWorker' in navigator)) {
         document.getElementById('swStatus').textContent = 'Service Worker未対応のブラウザです';
@@ -97,3 +97,4 @@
   </script>
 </body>
 </html>
+
