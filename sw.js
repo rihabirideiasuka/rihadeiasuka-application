@@ -1,5 +1,5 @@
 // === バージョンを上げると配信後に確実に切り替わります ⇒バージョンが上がった時にv=3部分をv=4にする===
-const SHELL_CACHE = 'rihadeiasuka-shell-v3';
+const SHELL_CACHE = 'rihadeiasuka-shell-v4';
 
 // 事前キャッシュする静的アセット
 const PRECACHE = [
@@ -78,4 +78,5 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+
 
