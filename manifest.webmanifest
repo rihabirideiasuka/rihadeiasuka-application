@@ -1,6 +1,6 @@
 {
   "name": "リハビリデイあすか見学申込",
-  "short_name": "リハデイあすか申込",
+  "short_name": "あすか申込",
   "id": "./",
   "start_url": "./index.html?src=pwa_v6",
   "scope": "./",
@@ -15,3 +15,4 @@
   "dir": "ltr",
   "description": "リハビリデイあすか見学申込をワンタップで開くランチャー"
 }
+
