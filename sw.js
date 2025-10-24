@@ -1,12 +1,12 @@
-// ★ キャッシュ名を更新すると配信後に確実に切り替わります
-const CACHE = 'rihadeiasuka-app-v2';
+// === バージョンを上げると配信後に確実に切り替わります ===
+const SHELL_CACHE = 'rihadeiasuka-shell-v3';
 
-// 事前キャッシュする静的アセット（必要に応じて追加）
-const ASSETS = [
+// 事前キャッシュする静的アセット
+const PRECACHE = [
   './',
   './index.html',
   './install.html',
-  './manifest.webmanifest',
+  './manifest.webmanifest.txt',
   './icons/icon-180.png',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -17,30 +17,29 @@ const ASSETS = [
 // ----- lifecycle -----
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(ASSETS))
+    caches.open(SHELL_CACHE).then((cache) => cache.addAll(PRECACHE))
   );
-  self.skipWaiting(); // 既存SWを待たず即時適用
+  self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
+      Promise.all(keys.filter((k) => k !== SHELL_CACHE).map((k) => caches.delete(k)))
     )
   );
-  self.clients.claim(); // 既存ページを即このSW管理下に
+  self.clients.claim();
 });
 
 // ----- fetch strategy -----
-// ・HTMLナビゲーションは「ネット優先・オフライン時は index.html 」
-// ・その他静的ファイルは「キャッシュ優先・なければネット → 成功時に動的キャッシュ」
+// ・HTMLナビゲーション: ネット優先 → 失敗時は index.html
+// ・それ以外: キャッシュ優先 → なければネット → 成功時は同一オリジンだけ動的キャッシュ
 self.addEventListener('fetch', (event) => {
   const req = event.request;
 
-  // POSTなどは触らない（そのままネットへ）
+  // GET以外は対象外
   if (req.method !== 'GET') return;
 
-  // ナビゲーション（ページ遷移）
   const isHTML =
     req.mode === 'navigate' ||
     req.destination === 'document' ||
@@ -50,9 +49,9 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(req)
         .then((res) => {
-          // 取得できたら index.html も更新しておく（簡易）
+          // 最新index.htmlをキャッシュへ入れ直す（簡易）
           const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put('./index.html', copy));
+          caches.open(SHELL_CACHE).then((c) => c.put('./index.html', copy));
           return res;
         })
         .catch(() => caches.match('./index.html'))
@@ -64,17 +63,18 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(req).then((cached) => {
       if (cached) return cached;
+
       return fetch(req)
         .then((netRes) => {
-          // 同一オリジンかつ成功したものだけ動的キャッシュ
+          // 同一オリジンかつ成功レスポンスのみ動的キャッシュ
           const url = new URL(req.url);
           if (netRes.ok && url.origin === location.origin) {
             const copy = netRes.clone();
-            caches.open(CACHE).then((c) => c.put(req, copy));
+            caches.open(SHELL_CACHE).then((c) => c.put(req, copy));
           }
           return netRes;
         })
-        .catch(() => cached); // 念のため
+        .catch(() => cached || Promise.reject('offline'))
     })
   );
 });
