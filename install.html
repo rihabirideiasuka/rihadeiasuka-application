@@ -6,10 +6,10 @@
   <meta name="theme-color" content="#ff1493" />
   <meta name="robots" content="noindex, nofollow" />
 
-  <link rel="manifest" href="./manifest.webmanifest.txt?v=3" />
-  <link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-180.png?v=3">
-  <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png?v=3" />
-  <link rel="icon" type="image/png" sizes="16x16" href="./icons/favicon-16.png?v=3" />
+  <link rel="manifest" href="./manifest.webmanifest?v=5" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./icon-180.png?v=5">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=5" />
+  <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16.png?v=5" />
 
   <title>ホーム追加・オフライン設定</title>
   <style>
@@ -32,18 +32,18 @@
     <div class="card">
       <h1>ホーム画面に追加（iOS）</h1>
       <ol>
-        <li>このページを開いたまま、Safariの<strong>共有</strong>ボタンを押す</li>
-        <li><strong>ホーム画面に追加</strong>を選び、右上の<strong>追加</strong>を押す</li>
-        <li>ホームのアイコンから起動すると、自動でアプリ（GAS）へ移動します</li>
+        <li>このページを開いたまま、Safari の<strong>共有</strong>を押す</li>
+        <li><strong>ホーム画面に追加</strong> → 右上<strong>追加</strong></li>
+        <li>ホームのアイコンから起動すると、起動ページ（index.html）→ GAS へ自動移動</li>
       </ol>
-      <p class="tip">アイコンが変わらない時は <code>icons/icon-180.png?v=4</code> のようにバージョンを上げてから再追加してください。</p>
+      <p class="tip">アイコンが変わらない時は <code>icon-180.png?v=6</code> のようにクエリ番号を上げて再追加。</p>
     </div>
 
     <div class="card" style="margin-top:16px">
       <h1>インストール（Android）</h1>
       <div class="row" style="gap:12px">
         <button id="btnInstall" class="btn" disabled>インストール</button>
-        <span id="instNote" class="tip">Chromeで開くと有効になります</span>
+        <span id="instNote" class="tip">Chrome で開くと有効になります</span>
       </div>
     </div>
 
@@ -58,43 +58,11 @@
   </div>
 
   <script>
-    // SW登録⇒navigator.serviceWorker.register('./sw.js?v=3', { scope: './' });⇒バージョンが上がった時にv=3部分をv=4にする
+    // SW登録：v=5 の数字を上げると新 SW を確実取得（クエリ・バージョン）
     (async () => {
       if (!('serviceWorker' in navigator)) {
-        document.getElementById('swStatus').textContent = 'Service Worker未対応のブラウザです';
+        document.getElementById('swStatus').textContent = 'Service Worker 未対応のブラウザです';
         return;
       }
       try {
-        const reg = await navigator.serviceWorker.register('./sw.js?v=3', { scope: './' });
-        document.getElementById('swStatus').innerHTML =
-          'オフラインキャッシュ <span class="ok">有効</span>（' + (reg.scope || 'scope: ./') + '）';
-      } catch (e) {
-        document.getElementById('swStatus').textContent = 'SW登録エラー：' + e;
-      }
-    })();
-
-    // Android: beforeinstallprompt
-    let deferredPrompt = null;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      const btn = document.getElementById('btnInstall');
-      btn.disabled = false;
-      document.getElementById('instNote').textContent = 'インストール可能です';
-      btn.onclick = async () => {
-        btn.disabled = true;
-        try {
-          await deferredPrompt.prompt();
-          const res = await deferredPrompt.userChoice;
-          document.getElementById('instNote').textContent = '結果：' + res.outcome;
-        } catch (err) {
-          document.getElementById('instNote').textContent = 'キャンセル/エラー';
-        } finally {
-          deferredPrompt = null;
-        }
-      };
-    });
-  </script>
-</body>
-</html>
-
+        const reg = await navigator.serviceWorker.register(
