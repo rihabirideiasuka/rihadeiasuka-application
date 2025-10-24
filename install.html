@@ -3,15 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
-  <meta name="theme-color" content="#f08c00" />
-  <link rel="apple-touch-icon" sizes="180x180" href="./icon-180.png?v=1">
-  <link rel="manifest" href="./manifest.webmanifest?v=1">
+
+  <!-- テーマ色：ショッキングピンク -->
+  <meta name="theme-color" content="#ff1493" />
+
+  <!-- iOS: ホーム追加用 -->
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-180.png?v=2">
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <link rel="manifest" href="./manifest.webmanifest?v=1" />
+  <meta name="apple-mobile-web-app-title" content="リハデイあすか申込" />
+
+  <!-- PWA manifest（重複削除して1本に） -->
+  <link rel="manifest" href="./manifest.webmanifest?v=2" />
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png?v=2" />
+  <link rel="icon" type="image/png" sizes="16x16" href="./icons/favicon-16.png?v=2" />
+
   <title>ホーム画面に追加（リハビリデイあすか見学申込）</title>
   <style>
-    :root{--bg:#f9f5ee;--card:#fff;--line:#e6dfd2;--fg:#2a2a2a;--muted:#6b6b6b;--accent:#f08c00;--radius:16px}
+    :root{
+      --bg:#f9f5ee;--card:#fff;--line:#e6dfd2;--fg:#2a2a2a;--muted:#6b6b6b;
+      /* ★アクセント色をピンクへ */
+      --accent:#ff1493;--radius:16px
+    }
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans JP',sans-serif}
     .wrap{max-width:680px;margin:10vh auto;padding:24px}
@@ -32,10 +47,9 @@
         <li>ホームのアイコンから起動すると、自動でアプリ（GAS）へ移動します。</li>
       </ol>
       <p class="tip">すでにGoogleアイコンで保存されてしまった場合は、古いショートカットを削除してから再追加してください。</p>
-      <p class="tip">アイコンが変わらない時は <code>icons/icon-180.png?v=2</code> のようにバージョンを上げて再追加。</p>
+      <p class="tip">アイコンが変わらない時は <code>icons/icon-180.png?v=3</code> のようにバージョンを上げて再追加。</p>
       <p><a href="./index.html" class="btn">通常の起動ページへ戻る</a></p>
     </div>
   </div>
 </body>
-
 </html>
