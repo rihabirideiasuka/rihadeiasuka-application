@@ -1,20 +1,18 @@
 {
   "name": "リハビリデイあすか見学申込",
   "short_name": "リハデイあすか申込",
-  "id": "/rihadeiasuka-application
-/",
-  "start_url": "/rihadeiasuka-application
-/",
-  "scope": "/rihadeiasuka-application
-/",
+  "id": "/rihadeiasuka-application/",
+  "start_url": "/rihadeiasuka-application/",
+  "scope": "/rihadeiasuka-application/",
   "display": "standalone",
   "background_color": "#f9f5ee",
-  "theme_color": "#f08c00",
+  "theme_color": "#ff1493",
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ],
   "description": "リハビリデイあすか見学申込をワンタップで開くランチャー",
-  "categories": ["finance", "productivity"]
-
+  "categories": ["productivity"],
+  "lang": "ja",
+  "dir": "ltr"
 }
