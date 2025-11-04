@@ -2,7 +2,7 @@
 // 1) ここ（const SHELL_CACHE = 'rihadeiasuka-shell-v5';）を増分すると古いキャッシュを掃除
 // 2) install.html / index.html の register('./sw.js?v=5') の数字も一緒に増分
 // ★配信切替用バージョン
-const SHELL_CACHE = 'rihabirideiasuka-shell-v7';
+const SHELL_CACHE = 'rihabirideiasuka-shell-v8';
 
 // 事前キャッシュ
 const PRECACHE = [
@@ -66,4 +66,5 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+
 
