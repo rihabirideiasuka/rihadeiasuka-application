@@ -2,7 +2,7 @@
   "name": "リハビリデイあすか見学申込",
   "short_name": "あすか申込",
   "id": "./",
-  "start_url": "./index.html?src=pwa_v6",
+  "start_url": "./index.html?src=pwa_v8",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f9f5ee",
@@ -15,4 +15,5 @@
   "dir": "ltr",
   "description": "リハビリデイあすか見学申込をワンタップで開くランチャー"
 }
+
 
